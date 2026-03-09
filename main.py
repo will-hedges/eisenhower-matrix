@@ -50,7 +50,8 @@ def main():
             # process the user's choice and update the task and matrix
             match opt:
                 case "C":
-                    eisenhowermatrix.tasks.append(get_new_task_from_user())
+                    new_task = get_new_task_from_user()
+                    eisenhowermatrix.tasks.append(Task(**new_task))
 
                 case "U":
                     # show the user a list of all tasks & let them select one
@@ -79,8 +80,6 @@ def main():
                                 upd_task.update_importance()
                             case _:
                                 pass
-
-                        upd_task.update_quadrant()
 
                 case "D":
                     del_task = get_user_task_selection(
