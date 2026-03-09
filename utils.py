@@ -103,13 +103,22 @@ def get_user_task_selection(EisenhowerMatrix, prompt):
             (Task): the Task object corresponding to the user's selection,
                         or None if the user enters a blank string
     """
+    tasks_by_quadrant = (
+        EisenhowerMatrix.quadrant_1
+        + EisenhowerMatrix.quadrant_2
+        + EisenhowerMatrix.quadrant_3
+        + EisenhowerMatrix.quadrant_4
+    )
+
     print()
     print(prompt)
+
     task_title = pyip.inputMenu(
-        [t.title for t in EisenhowerMatrix.tasks],
+        [t.title for t in tasks_by_quadrant],
         numbered=True,
         blank=True,
     )
+
     if task_title:
         return next(t for t in EisenhowerMatrix.tasks if t.title == task_title)
     return
