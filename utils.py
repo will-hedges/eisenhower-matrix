@@ -23,45 +23,34 @@ def get_new_task_from_user():
     if not title:
         return
 
-    urg_impt = pyip.inputChoice(
-        ["B", "I", "U", "N"],
-        prompt="\n".join(
-            (
-                f"'{title}' is",
-                " [B]oth urgent AND important (Q1)",
-                " [I]mportant (Q2)",
-                " [U]rgent (Q3)",
-                " [N]either (Q4)",
-                "> ",
-            )
-        ),
+    print(f"'{title}' is...")
+    urg_impt = pyip.inputMenu(
+        ["Urgent + Important", "Important", "Urgent", "Neither"],
+        numbered=True,
     )
 
     match urg_impt:
-        case "B":
-            # BOTH urgent AND important (Quadrant 1)
+        case "Urgent + Important":
             urgent = True
             important = True
             quadrant = 1
-        case "U":
+        case "Important":
+            # IMPORTANT but not urgent (Quadrant 2)
+            urgent = False
+            important = True
+            quadrant = 2
+        case "Urgent":
             # URGENT but not important (Quadrant 3)
             urgent = True
             important = False
             quadrant = 3
-        case "N":
+        case "Neither":
             # NEITHER urgent nor important (Quadrant 4)
             urgent = False
             important = False
             quadrant = 4
         case _:
-            """
-            NOTE default case necessary BUT pyip will catch this since we
-            would expect urgent N important Y (Quadrant 2) to be the
-            majority of our day-to-day work, so make that the default
-            """
-            urgent = False
-            important = True
-            quadrant = 2
+            pass
 
     return {
         "title": title,
@@ -71,13 +60,13 @@ def get_new_task_from_user():
     }
 
 
-def get_task_quadrant(urgent, important):
+def get_quadrant(urgent, important):
     match (urgent, important):
         case (True, True):
             return 1
-        case (True, False):
-            return 2
         case (False, True):
+            return 2
+        case (True, False):
             return 3
         case (False, False):
             return 4
@@ -139,21 +128,18 @@ def get_user_update_selection(task):
             (str): the property the user wants to update on the Task
     """
     curr_quad = task.quadrant
-    quad_if_urg_upd = get_task_quadrant(not task.urgent, task.important)
-    quad_if_imp_upd = get_task_quadrant(task.urgent, not task.important)
-    quad_if_urg_and_imp_upd = get_task_quadrant(
-        not task.urgent,
-        not task.important,
-    )
+    upd_urg_quad = get_quadrant(not task.urgent, task.important)
+    upd_imp_quad = get_quadrant(task.urgent, not task.important)
+    upd_urg_and_imp_quad = get_quadrant(not task.urgent, not task.important)
 
     print()
     prop_sel = pyip.inputMenu(
         [
-            f"Title",
-            f"Urgency    (Q{curr_quad} -> Q{quad_if_urg_upd})",
-            f"Importance (Q{curr_quad} -> Q{quad_if_imp_upd})",
-            f"Urgency and Importance (Q{curr_quad} -> Q{quad_if_urg_and_imp_upd})",
-            f"All",
+            "Title",
+            f"Urgency    (Q{curr_quad} -> Q{upd_urg_quad})",
+            f"Importance (Q{curr_quad} -> Q{upd_imp_quad})",
+            f"Urgency + Importance (Q{curr_quad} -> Q{upd_urg_and_imp_quad})",
+            "All",
         ],
         prompt="\n".join(
             (
@@ -170,7 +156,7 @@ def get_user_update_selection(task):
         blank=True,
     )
 
-    if prop_sel.startswith("Urgency and Importance"):
+    if prop_sel.startswith("Urgency + Importance"):
         return "urgency_and_importance"
     elif prop_sel.startswith("Title"):
         return "title"
@@ -216,12 +202,15 @@ def show_quadrant_with_header(header, quadrant_tasks):
     """
     Displays a header for a quadrant and a bulleted list of Tasks
     """
-    print("\n" + header)
+    print("\n" + header + "\n")
+
     if quadrant_tasks:
         for qt in quadrant_tasks:
             print(f" * {qt.title}")
     else:
-        print(" " + "N/A")
+        print(" " * 3 + "N/A")
+
+    print()
     return
 
 
@@ -234,7 +223,7 @@ def write_matrix_to_json(EisenhowerMatrix, json_fp):
     Writes out the tasks in an EisenhowerMatrix to a JSON file.
 
         Params:
-            EisenhowerMatrix (EisenhowerMatrix): the EisenhowerMatrix to write out
+            EisenhowerMatrix (EisenhowerMatrix): the EisenhowerMatrix to save
             json_fp (str): the file path to write the JSON to
     """
     task_data = {"tasks": []}

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # eisenhower_matrix.py - a Python class representing an Eisenhower matrix
 
+
 from utils import show_quadrant_with_header, sort_tasks_by_title
 
 
@@ -67,17 +68,12 @@ class EisenhowerMatrix:
     def display(self):
         self.update_quadrants()
 
-        show_quadrant_with_header(
-            "Quadrant 1: Urgent and Important",
-            self.quadrant_1,
-        )
-        show_quadrant_with_header(
-            "Quadrant 2: Urgent but Not Important", self.quadrant_2
-        )
-        show_quadrant_with_header(
-            "Quadrant 3: Not Urgent but Important", self.quadrant_3
-        )
-        show_quadrant_with_header(
-            "Quadrant 4: Not Urgent and Not Important", self.quadrant_4
-        )
+        print()
+        print("  **  Eisenhower Matrix  **  ")
+        show_quadrant_with_header(" !!! CRISES !!! ", self.quadrant_1)
+        show_quadrant_with_header(" --- Day-to-Day --- ", self.quadrant_2)
+        show_quadrant_with_header(" ___ Tomorrow? ___ ", self.quadrant_3)
+        show_quadrant_with_header(" zzz Time Wasters zzz ", self.quadrant_4)
+        print()
+
         return

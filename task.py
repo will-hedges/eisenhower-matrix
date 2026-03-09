@@ -2,7 +2,7 @@
 # task.py - a simple Python class representing a task on an Eisenhower matrix
 
 
-from utils import input_with_default
+from utils import get_quadrant, input_with_default
 
 
 class Task:
@@ -61,17 +61,11 @@ class Task:
         return
 
     def update_quadrant(self):
-        match (self.urgent, self.important):
-            case (True, True):
-                self.quadrant = 1
-            case (True, False):
-                self.quadrant = 2
-            case (False, True):
-                self.quadrant = 3
-            case (False, False):
-                self.quadrant = 4
-            case _:
-                pass
+        """
+        Updates the Task's quadrant property based on its new urgency and
+        importance.
+        """
+        self.quadrant = get_quadrant(self.urgent, self.important)
         return
 
     def update_urgency(self):
