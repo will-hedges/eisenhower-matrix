@@ -23,6 +23,7 @@ def get_new_task_from_user():
     if not title:
         return
 
+    print()
     print(f"'{title}' is...")
     urg_impt = pyip.inputMenu(
         ["Urgent + Important", "Important", "Urgent", "Neither"],
@@ -103,18 +104,11 @@ def get_user_task_selection(EisenhowerMatrix, prompt):
             (Task): the Task object corresponding to the user's selection,
                         or None if the user enters a blank string
     """
-    tasks_by_quadrant = (
-        EisenhowerMatrix.quadrant_1
-        + EisenhowerMatrix.quadrant_2
-        + EisenhowerMatrix.quadrant_3
-        + EisenhowerMatrix.quadrant_4
-    )
-
     print()
     print(prompt)
 
     task_title = pyip.inputMenu(
-        [t.title for t in tasks_by_quadrant],
+        [t.title for t in EisenhowerMatrix.tasks],
         numbered=True,
         blank=True,
     )
@@ -205,26 +199,6 @@ def load_matrix_from_json(json_fp):
     with open(json_fp, "r") as json_file:
         data = json.load(json_file)
         return [task for task in data["tasks"]]
-
-
-def show_quadrant_with_header(header, quadrant_tasks):
-    """
-    Displays a header for a quadrant and a bulleted list of Tasks
-    """
-    print("\n" + header + "\n")
-
-    if quadrant_tasks:
-        for qt in quadrant_tasks:
-            print(f" * {qt.title}")
-    else:
-        print(" " * 3 + "N/A")
-
-    print()
-    return
-
-
-def sort_tasks_by_title(task_list):
-    return sorted(task_list, key=lambda t: t.title.lower())
 
 
 def write_matrix_to_json(EisenhowerMatrix, json_fp):
