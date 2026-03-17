@@ -2,16 +2,35 @@
 # eisenhower_matrix.py - a Python class representing an Eisenhower matrix
 
 
-from utils import show_quadrant_with_header, sort_tasks_by_title
+def show_quadrant_with_header(header, tasks_in_quadrant):
+    """
+    Displays a header for a quadrant and a bulleted list of Tasks
+    """
+    print("\n" + " " + header + "\n")
+
+    if tasks_in_quadrant:
+        for task in tasks_in_quadrant:
+            print(f" * {task.title}")
+    else:
+        print(" " * 3 + "N/A")
+
+    print()
+    return
+
+
+def sort_tasks_by_title(task_list):
+    return sorted(task_list, key=lambda t: t.title.lower())
 
 
 class EisenhowerMatrix:
     def __init__(self, tasks):
-        self.tasks = tasks
         self.quadrant_1 = [t for t in tasks if t.quadrant == 1]
         self.quadrant_2 = [t for t in tasks if t.quadrant == 2]
         self.quadrant_3 = [t for t in tasks if t.quadrant == 3]
         self.quadrant_4 = [t for t in tasks if t.quadrant == 4]
+        self.tasks = (
+            self.quadrant_1 + self.quadrant_2 + self.quadrant_3 + self.quadrant_4
+        )
         return
 
     @property
@@ -58,22 +77,29 @@ class EisenhowerMatrix:
         self._quadrant_4 = sort_tasks_by_title(tasks)
         return
 
-    def update_quadrants(self):
+    def reset(self):
         self.quadrant_1 = [t for t in self.tasks if t.quadrant == 1]
         self.quadrant_2 = [t for t in self.tasks if t.quadrant == 2]
         self.quadrant_3 = [t for t in self.tasks if t.quadrant == 3]
         self.quadrant_4 = [t for t in self.tasks if t.quadrant == 4]
+        self.tasks = (
+            self.quadrant_1 + self.quadrant_2 + self.quadrant_3 + self.quadrant_4
+        )
         return
 
     def display(self):
-        self.update_quadrants()
+        self.reset()
 
         print()
         print("  **  Eisenhower Matrix  **  ")
-        show_quadrant_with_header(" !!! CRISES !!! ", self.quadrant_1)
-        show_quadrant_with_header(" --- Day-to-Day --- ", self.quadrant_2)
-        show_quadrant_with_header(" ___ Tomorrow? ___ ", self.quadrant_3)
-        show_quadrant_with_header(" zzz Time Wasters zzz ", self.quadrant_4)
+        show_quadrant_with_header("!!! TOP PRIORITY !!!", self.quadrant_1)
+        show_quadrant_with_header("### Day-to-Day ###", self.quadrant_2)
+        show_quadrant_with_header("--- Tomorrow? ---", self.quadrant_3)
+        show_quadrant_with_header("zzz Low Priority zzz", self.quadrant_4)
         print()
 
         return
+
+    """
+    !@#$%^&*()_+-=~`|\/?.,<>;:'"
+    """
